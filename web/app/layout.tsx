@@ -1,6 +1,7 @@
 import "./globals.css";
-import { Providers } from "@/components/providers/providers";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Header } from "@/components/layout/header";
+import { AuthContextProvider } from "@/components/providers/contexts/auth-context";
 export default function Layout({
   children,
 }: Readonly<{
@@ -12,8 +13,17 @@ export default function Layout({
         <title>My Next App</title>
       </head>
       <body>
-        <Header />
-        <Providers>{children}</Providers>
+        <AuthContextProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Header />
+            {children}
+          </ThemeProvider>
+        </AuthContextProvider>
       </body>
     </html>
   );

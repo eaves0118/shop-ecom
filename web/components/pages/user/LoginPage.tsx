@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {
@@ -6,15 +7,40 @@ import {
   CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-
+import { useAuth } from "@/components/providers/contexts/auth-context";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { useState } from "react";
 
 export default function LoginPage() {
+  const [form, setForm] = useState({
+    username: "",
+    password: "",
+  });
+
+  const { login, loading } = useAuth();
+
+  const handleOnChange = (e: React.ChangeEvent<any>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const { username, password } = form;
+      await login(username, password);
+    } catch (error) {
+      alert("Invalid username or password");
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -27,27 +53,43 @@ export default function LoginPage() {
         </CardAction>
       </CardHeader>
       <CardContent>
-        <form>
+        <form onSubmit={handleOnSubmit}>
           <FieldGroup>
             <Field>
-              <FieldLabel>Email</FieldLabel>
-              <Input id="email" type="email" placeholder="m@example.com" required />
+              <FieldLabel>User name</FieldLabel>
+              <Input
+                id="username"
+                type="text"
+                name="username"
+                value={form.username}
+                onChange={handleOnChange}
+                placeholder="Your user name..."
+                required
+              />
             </Field>
             <Field>
               <FieldLabel>Password</FieldLabel>
-              <Input id="password" type="password" placeholder="******" required />
+              <Input
+                id="password"
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleOnChange}
+                placeholder="******"
+                required
+              />
+            </Field>
+            <Field>
+              <Button type="submit" className="w-full">
+                Login
+              </Button>
+              <Button variant="outline" className="w-full">
+                Login with Google
+              </Button>
             </Field>
           </FieldGroup>
         </form>
       </CardContent>
-      <CardFooter className="flex-col gap-3">
-        <Button type="submit" className="w-full">
-          Login
-        </Button>
-        <Button variant="outline" className="w-full">
-          Login with Google
-        </Button>
-      </CardFooter>
     </Card>
   );
 }

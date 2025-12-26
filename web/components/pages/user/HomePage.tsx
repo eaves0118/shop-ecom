@@ -1,5 +1,5 @@
 "use client";
 
 export default function HomePage() {
-  return <div className="min-h-screen bg-background"></div>;
+  return <div className="min-h-screen bg-background">this is client page</div>;
 }

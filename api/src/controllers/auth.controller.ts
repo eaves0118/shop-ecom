@@ -8,7 +8,7 @@ class AuthController {
 
       return res.status(201).json({
         message: "Register successfully",
-        user: result.createAt,
+        user: result,
       });
     } catch (error: any) {
       return res.status(400).json({
@@ -40,4 +40,4 @@ class AuthController {
   }
 }
 
-export default AuthController
+export default AuthController;

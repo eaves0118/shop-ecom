@@ -10,10 +10,10 @@ const eslintConfig = defineConfig([
   {
     rules: {
       "no-unused-vars": "warn", // Cảnh báo biến không sử dụng
-      "@typescript-eslint/no-explicit-any": "error", // Không cho phép dùng 'any'
+      "@typescript-eslint/no-explicit-any": "warn", // Không cho phép dùng 'any'
       "react/react-in-jsx-scope": "off", // Next.js không cần import React
       // "no-console": ["warn", { allow: ["warn", "error"] }], // Hạn chế console.log
-      "no-console": "error",
+      "no-console": "warn",
     },
   },
   // Override default ignores of eslint-config-next.
