@@ -10,8 +10,11 @@ import {
 } from "@/components/ui/navigation-menu";
 
 import { ModeToggle } from "../mode-toggle";
+import { useAuth } from "../providers/contexts/auth-context";
 
 export function HeaderNav() {
+  const { user, logout, loading } = useAuth();
+  if (loading) return null;
   return (
     <NavigationMenu>
       <NavigationMenuList>
@@ -22,6 +25,16 @@ export function HeaderNav() {
           </NavigationMenuContent>
         </NavigationMenuItem>
       </NavigationMenuList>
+      {user ? (
+        <div>
+          {user.email}{" "}
+          <button className="cursor-pointer" onClick={logout}>
+            Logout
+          </button>
+        </div>
+      ) : (
+        "Login"
+      )}
       <ModeToggle />
     </NavigationMenu>
   );

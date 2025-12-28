@@ -1,7 +1,7 @@
 import { Schema, model, Document } from "mongoose";
 
-interface IUser extends Document {
-  username: string;
+export interface IUser extends Document {
+  email: string;
   password: string;
   role: "user" | "admin";
   isActive: Boolean;
@@ -11,8 +11,8 @@ interface IUser extends Document {
 
 const userSchema = new Schema<IUser>(
   {
-    username: { type: String, require: true, unique: true, trim: true },
-    password: { type: String, require: true, select: false },
+    email: { type: String, required: true, unique: true, trim: true },
+    password: { type: String, required: true, select: false },
     role: { type: String, enum: ["user", "admin"], default: "user" },
     isActive: {
       type: Boolean,

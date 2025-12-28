@@ -2,6 +2,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Header } from "@/components/layout/header";
 import { AuthContextProvider } from "@/components/providers/contexts/auth-context";
+import { Toaster } from "@/components/ui/sonner";
+
 export default function Layout({
   children,
 }: Readonly<{
@@ -14,6 +16,7 @@ export default function Layout({
       </head>
       <body>
         <AuthContextProvider>
+          <Toaster />
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

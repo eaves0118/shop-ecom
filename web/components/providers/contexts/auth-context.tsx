@@ -2,8 +2,9 @@
 
 import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { User } from "../../types/user";
-import { signin, signup } from "@/lib/api/AuthService";
+import { signin, signup, logout as logoutApi, getMe } from "@/lib/api/AuthService";
 import { useRouter } from "next/navigation";
+import { setAccessToken } from "@/lib/axios";
 
 interface AuthContextProps {
   children: ReactNode;
@@ -13,8 +14,8 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   loading: boolean;
-  login: (username: string, password: string) => Promise<void>;
-  register: (username: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -27,34 +28,64 @@ export function AuthContextProvider({ children }: AuthContextProps) {
 
   const isAuthenticated = !!user;
 
-  const login = async (username: string, password: string) => {
+  useEffect(() => {
+    const initAuth = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await getMe();
+        setUser(res.data);
+      } catch {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initAuth();
+  }, []);
+
+  const login = async (email: string, password: string) => {
     try {
       setLoading(true);
-      const res = await signin(username, password);
-      setUser(res.data.user);
+      const res = await signin(email, password);
+      const user = res.data.user;
+      const token = res.data.accessToken;
+      setUser(user);
+      setAccessToken(token);
+
       if (res.data.user.role === "admin") {
         router.push("/admin");
       } else {
         router.push("/");
       }
-    } catch (error) {
-      console.log(error);
     } finally {
       setLoading(false);
     }
   };
 
-  const register = async (username: string, password: string) => {
+  const register = async (email: string, password: string) => {
     try {
       setLoading(true);
-      await signup(username, password);
+      const res = await signup(email, password);
+      console.log(res);
     } finally {
       setLoading(false);
     }
   };
 
   const logout = async () => {
+    try {
+      await logoutApi();
+    } catch {}
+    localStorage.removeItem("accessToken");
     setUser(null);
+
+    window.location.href = "/login";
   };
   return (
     <AuthContext.Provider

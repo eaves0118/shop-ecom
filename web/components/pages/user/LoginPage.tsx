@@ -14,14 +14,20 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/components/providers/contexts/auth-context";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { useState } from "react";
+import { toast } from "sonner";
 
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 export default function LoginPage() {
+  const { login, loading } = useAuth();
+
   const [form, setForm] = useState({
-    username: "",
+    email: "",
     password: "",
   });
 
-  const { login, loading } = useAuth();
+  const [error, setError] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleOnChange = (e: React.ChangeEvent<any>) => {
     const { name, value } = e.target;
@@ -34,10 +40,14 @@ export default function LoginPage() {
   const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const { username, password } = form;
-      await login(username, password);
+      const { email, password } = form;
+      await login(email, password);
+      setError("");
     } catch (error) {
-      alert("Invalid username or password");
+      const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+      toast.error(errorMessage);
+      setError(errorMessage);
+      console.log("da set duoc err", errorMessage);
     }
   };
 
@@ -56,32 +66,48 @@ export default function LoginPage() {
         <form onSubmit={handleOnSubmit}>
           <FieldGroup>
             <Field>
-              <FieldLabel>User name</FieldLabel>
+              <FieldLabel>Email</FieldLabel>
               <Input
-                id="username"
-                type="text"
-                name="username"
-                value={form.username}
+                id="email"
+                type="email"
+                name="email"
+                value={form.email}
                 onChange={handleOnChange}
-                placeholder="Your user name..."
+                placeholder="Your email..."
                 required
               />
             </Field>
             <Field>
               <FieldLabel>Password</FieldLabel>
-              <Input
-                id="password"
-                type="password"
-                name="password"
-                value={form.password}
-                onChange={handleOnChange}
-                placeholder="******"
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={form.password}
+                  onChange={handleOnChange}
+                  placeholder="******"
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </Field>
+
             <Field>
               <Button type="submit" className="w-full">
-                Login
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading...
+                  </>
+                ) : (
+                  "Login"
+                )}
               </Button>
               <Button variant="outline" className="w-full">
                 Login with Google
