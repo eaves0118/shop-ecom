@@ -14,6 +14,7 @@ import { useAuth } from "../providers/contexts/auth-context";
 
 export function HeaderNav() {
   const { user, logout, loading } = useAuth();
+
   if (loading) return null;
   return (
     <NavigationMenu>
@@ -25,16 +26,6 @@ export function HeaderNav() {
           </NavigationMenuContent>
         </NavigationMenuItem>
       </NavigationMenuList>
-      {user ? (
-        <div>
-          {user.email}{" "}
-          <button className="cursor-pointer" onClick={logout}>
-            Logout
-          </button>
-        </div>
-      ) : (
-        "Login"
-      )}
       <ModeToggle />
     </NavigationMenu>
   );
